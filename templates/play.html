@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChesTron</title>
+    <link rel="icon" type="image/png" href="static/img/favicon.png">
+    <!--JQuery script-->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!--chessjs script-->
+    <script src="/static/js/chess.js"></script>
+
+    <!--chessboardjs widget-->
+    <link rel="stylesheet"
+          href="/static/css/chessboard-1.0.0.min.css">
+    <script src="/static/js/chessboard-1.0.0.min.js"></script>
+
+</head>
+<body class="play-page">
+<!-- Hidden input to store opponent -->
+<input type="hidden" id="opponent" value="{{ opponent }}">
+
+<!--Main Page-->
+<div class="background">
+    <div class="gameplay-container">
+        <div class="board-container">
+            <!-- chess board view -->
+            <div id="chess_board" class="chess-board"></div>
+        </div>
+        <div class="stats-container">
+            <!-- Game stats -->
+            <div class="game-player">
+                <div id="model-widget" class="player-widget">
+                    <p>
+                        {% if opponent== 'Option1' %}
+                        PRUNER
+                        {% else %}
+                        CNINGA
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="player-avatar-widget">
+                    <img
+                            src="{% if opponent == 'Option1' %}/static/img/Pruner.png{% else %}/static/img/CNinga.png{% endif %}"
+                            alt="MinMax"
+                            class="opponent-image">
+                </div>
+            </div>
+            <div class="game-stats">
+                <div class="stats-head">Status:</div>
+                <div id="status" class="move-data"></div>
+                <div class="stats-head">PGN:</div>
+                <div id="pgn" class="pgn-data"></div>
+            </div>
+            <div class="game-player">
+                <div id="user-widget" class="player-widget">
+                    <p>YOU</p>
+                </div>
+                <div class="player-avatar-widget">
+                    <img
+                            src="static/img/Player.png"
+                            alt="You"
+                            class="opponent-image">
+                </div>
+            </div>
+        </div>
+        <div class="control-container">
+            <!--game controls-->
+            <div class="game-controls">
+                <button id="new_game" class="control-button">New Game</button>
+                <button id="make_move" class="control-button">Make Move</button>
+                <button id="take_back" class="control-button">Take Back</button>
+                <button id="flip_board" class="control-button">Flip Board</button>
+                <button id="quit_game" class="control-button">Quit Game</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    //make computer move
+    function make_move() {
+        //retrieve opponent from hidden input field
+        const opponent = document.getElementById("opponent").value;
+
+        $.post('/make_move', {'fen': game.fen(), 'opponent': opponent}, function (data) {
+            //load fen into the current board state
+            game.move(data.best_move, {sloppy: true});
+            //update board position
+            board.position(game.fen());
+            //update the status
+            updateStatus();
+        });
+    }
+
+    //Handle new game button click
+    $('#new_game').on('click', function () {
+        //reset board state
+        game.reset()
+        //set initial board position
+        board.position('start')
+    });
+
+    //Handle make move button click
+    $('#make_move').on('click', function () {
+        //make the move
+        make_move();
+    });
+
+    //Hnadle take back button click
+    $('#take_back').on('click', function () {
+        //take move back
+        game.undo()
+        game.undo()
+        //update board
+        board.position(game.fen());
+        //update the status
+        updateStatus();
+    });
+
+    //Handle flip board button click
+    $('#flip_board').on('click', function () {
+        //flip board
+        board.flip()
+    });
+
+    //Handle quit game button
+    $('#quit_game').on('click', function() {
+        window.location.href = '/';
+    });
+
+    //GUI board and game state variables
+    var board = null
+    var game = new Chess()
+    var $status = $('#status')
+    var $fen = $('#fen')
+    var $pgn = $('#pgn')
+
+    //handle the highlight for player widget
+    function toggleActiveWidget() {
+        const currentTurn = game.turn();
+        const userWidget = document.getElementById('user-widget');
+        const modelWidget = document.getElementById('model-widget');
+
+        if (currentTurn === 'w') {
+            userWidget.classList.add('active');
+            modelWidget.classList.remove('active');
+        } else {
+            modelWidget.classList.add('active');
+            userWidget.classList.remove('active');
+        }
+
+    }
+
+    //picking a piece
+    function onDragStart(source, piece, position, orientation) {
+        // do not pick up pieces if the game is over
+        if (game.game_over()) return false
+
+        // only pick up pieces for the side to move
+        if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            return false
+        }
+    }
+
+    //dropping a piece
+    function onDrop(source, target) {
+        // see if the move is legal
+        var move = game.move({
+            from: source,
+            to: target,
+            promotion: 'q'
+        })
+
+        // illegal move
+        if (move === null) return 'snapback'
+
+        //make computer move
+        make_move()
+
+        //update status
+        updateStatus()
+    }
+
+    // update the board position after the piece snap
+    // for castling, en passant, pawn promotion
+    function onSnapEnd() {
+        board.position(game.fen())
+    }
+
+    //update game status
+    function updateStatus() {
+        var status = ''
+
+        var moveColor = 'White'
+        if (game.turn() === 'b') {
+            moveColor = 'Black'
+        }
+
+        // checkmate?
+        if (game.in_checkmate()) {
+            status = 'Game over, ' + moveColor + ' is in checkmate.'
+        }
+
+        // draw?
+        else if (game.in_draw()) {
+            status = 'Game over, drawn position'
+        }
+
+        // game still on
+        else {
+            status = moveColor + ' to move'
+
+            // check?
+            if (game.in_check()) {
+                status += ', ' + moveColor + ' is in check'
+            }
+        }
+        //update DOM elements
+        $status.html(status)
+        $fen.html(game.fen())
+        $pgn.html(game.pgn())
+
+        //update player widget
+        toggleActiveWidget()
+    }
+
+    //chess board configurations
+    var config = {
+        draggable: true,
+        position: 'start',
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd
+    }
+    //create chess board widget instance
+    board = Chessboard('chess_board', config)
+
+    //update game status
+    updateStatus()
+</script>

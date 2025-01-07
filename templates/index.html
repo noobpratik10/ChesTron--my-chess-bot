@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChesTron</title>
+    <link rel="icon" type="image/png" href="static/img/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="index-page">
+
+<!-- New Game -->
+<div class="background">
+    <button id="start-game" class="button">New Game</button>
+</div>
+
+<!-- Dialog Box -->
+<div id="dialog-box" class="dialog-box hidden">
+    <button id="close-dialog" class="close-button">X</button>
+    <div id="dialog-box-header">
+        <h2>Choose Your Opponent</h2>
+    </div>
+    <form id="opponent-form" action="/make_move" method="POST">
+        <div class="opponent-selection">
+            <div class="opponent">
+                <input type="radio" name="opponent" value="Option1" id="minmax" checked>
+                <label for="minmax">
+                    <div class="avatar-container">
+                        <img src="static/img/Pruner.png" alt="MinMax" class="opponent-image">
+                    </div>
+                    <p>PRUNER</p>
+                </label>
+            </div>
+            <div class="opponent">
+                <input type="radio" name="opponent" value="Option2" id="cnn">
+                <label for="cnn">
+                    <div class="avatar-container">
+                        <img src="static/img/CNinga.png" alt="CNN" class="opponent-image">
+                    </div>
+                    <p>CNINGA</p>
+                </label>
+            </div>
+        </div>
+        <div id="dialog-box-start-game">
+            <button type="submit" class="button">Start Game</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const startButton = document.getElementById("start-game");
+    const dialogBox = document.getElementById("dialog-box");
+    const closeButton = document.getElementById("close-dialog");
+    const images = document.querySelectorAll('.opponent label');
+
+    // Show dialog box when the "New Game" button is clicked
+    startButton.addEventListener("click", function () {
+        dialogBox.classList.remove("hidden");
+        startButton.classList.add("hidden");
+    });
+
+    // Close dialog box when the close button is clicked
+    closeButton.addEventListener("click", function () {
+        dialogBox.classList.add("hidden");
+        startButton.classList.remove("hidden");
+    });
+
+    //Image selection handler
+    images.forEach(image => {
+        image.addEventListener('click', function () {
+            const radio = image.previousElementSibling;
+            radio.checked = true;
+        });
+    });
+
+
+    // Form submission handler
+    const opponentForm = document.getElementById("opponent-form");
+    opponentForm.addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent form submission
+        const selectedOption = document.querySelector(
+            'input[name="opponent"]:checked'
+        ).value;
+        console.log(`Selected Opponent: ${selectedOption}`);
+        window.location.href = `/play?opponent=${selectedOption}`;
+    });
+</script>
+</body>
+</html>

@@ -14,13 +14,22 @@
 - Intelligent move suggestions and analysis based on game phase.
 - Switch between PRUNER (logic-driven) and CNINGA (data-driven) chess engines.  
 
-## Tech Stack
-- **Frontend**: HTML, CSS, JavaScript  
-- **Backend**: Flask (Python), enabling API-driven interactions with the chess engines.  
+## Tech Stack  
+- **Frontend**:  
+  - HTML, CSS, JavaScript  
+  - **Chessboard.js**: Used to embed an interactive chess board into the web application.  
+  - **Chess.js**: A headless JavaScript library integrated with Chessboard.js to handle chess logic and game states.  
+
+- **Backend**:  
+  - **Flask**: Python-based framework for handling API-driven interactions with the chess engines and serving the web app.  
+  - **Python-Chess**: A robust Python library used for move generation, validation, and handling chess rules without the need to manually implement them.  
+
 - **AI Algorithms**:  
-  - Minimax with Alpha-Beta pruning for PRUNER.  
-  - TensorFlow/Keras for training and deploying CNINGA.  
-- **Evaluation**: PESTO evaluation tables for optimized middle-game and end-game assessments.  
+  - **PRUNER**: Built using Minimax with Alpha-Beta pruning, optimized for efficiency and performance.  
+  - **CNINGA**: Powered by TensorFlow/Keras, trained on 100,000+ Lichess games (2300+ rating).  
+
+- **Evaluation**:  
+  - **PESTO Evaluation Tables**: Optimized tables used for precise middle-game and end-game assessments.  
 
 ## Installation  
 Follow these steps to get ChesTron running locally:  

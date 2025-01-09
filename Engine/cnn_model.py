@@ -1,7 +1,6 @@
 import pickle
 import numpy as np
-from tensorflow.keras.models import load_model
-
+from keras.models import load_model
 import chess
 
 def load_model_and_mapping():

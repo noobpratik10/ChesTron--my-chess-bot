@@ -51,3 +51,7 @@ Follow these steps to get ChesTron running locally:
    ```bash
    python app.py
    ```  
+## Screenshots
+![image alt](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/ea4315d2eb846a479e7267ebf21b14400043cbfa/static/img/Screenshot%202025-03-17%20220430.png)
+![image alt](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/ea4315d2eb846a479e7267ebf21b14400043cbfa/static/img/Screenshot%202025-03-17%20220446.png)
+![image alt](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/ea4315d2eb846a479e7267ebf21b14400043cbfa/static/img/Screenshot%202025-03-17%20220621.png)

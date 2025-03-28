@@ -9,81 +9,217 @@
 </head>
 <body class="index-page">
 
-<!-- New Game -->
 <div class="background">
-    <button id="start-game" class="button">New Game</button>
-</div>
-
-<!-- Dialog Box -->
-<div id="dialog-box" class="dialog-box hidden">
-    <button id="close-dialog" class="close-button">X</button>
-    <div id="dialog-box-header">
-        <h2>Choose Your Opponent</h2>
+    <!-- Main Dialog Box -->
+    <div id="main-dialog" class="dialog-box-home">
+        <button id="sign-up" class="button-home">Sign Up</button>
+        <button id="log-in" class="button-home">Log In</button>
     </div>
-    <form id="opponent-form" action="/make_move" method="POST">
-        <div class="opponent-selection">
-            <div class="opponent">
-                <input type="radio" name="opponent" value="Option1" id="minmax" checked>
-                <label for="minmax">
-                    <div class="avatar-container">
-                        <img src="static/img/Pruner.png" alt="MinMax" class="opponent-image">
-                    </div>
-                    <p>PRUNER</p>
-                </label>
-            </div>
-            <div class="opponent">
-                <input type="radio" name="opponent" value="Option2" id="cnn">
-                <label for="cnn">
-                    <div class="avatar-container">
-                        <img src="static/img/CNinga.png" alt="CNN" class="opponent-image">
-                    </div>
-                    <p>CNINGA</p>
-                </label>
-            </div>
+
+    <!-- Login Dialog box-->
+    <div id="login-dialog" class="dialog-box-home-login" style="display: none;">
+        <h2>Login</h2>
+        <div class="login-dialog-container">
+            <p>Username:</p>
+            <input type="text" id="login-username" placeholder="Username" required>
         </div>
-        <div id="dialog-box-start-game">
-            <button type="submit" class="button">Start Game</button>
+        <div class="login-dialog-container">
+            <p>Password:</p>
+            <input type="password" id="login-password" placeholder="Password" required>
         </div>
-    </form>
+        <div class="login-dialog-container">
+            <button class="button-home" id="submit-login">Submit</button>
+            <button class="button-home" id="back-to-main-login">Back</button>
+        </div>
+    </div>
+
+
+    <!-- Sign Up Dialog Box -->
+    <div id="sign-up-dialog" class="dialog-box-home-signup" style="display: none;">
+        <h2>Sign Up</h2>
+        <div class="sign-up-dialog-container">
+            <p>Name:</p>
+            <input type="text" id="sign-up-name" placeholder="Full Name" required>
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Email:</p>
+            <input type="email" id="sign-up-email" placeholder="Email" required>
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Username:</p>
+            <input type="text" id="sign-up-username" placeholder="Username" required>
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Password:</p>
+            <input type="password" id="sign-up-password" placeholder="Password" required>
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Confirm Password:</p>
+            <input type="password" id="sign-up-confirm-password" placeholder="Confirm Password" required>
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Chess Rating:</p>
+            <input type="number" id="sign-up-rating" placeholder="Rating" min="0">
+        </div>
+        <div class="sign-up-dialog-container">
+            <p>Profile Picture:</p>
+            <input type="file" id="sign-up-profile-pic" accept="image/*">
+        </div>
+        <div class="sign-up-dialog-container">
+            <button class="button-home" id="submit-sign-up">Submit</button>
+            <button class="button-home" id="back-to-main-signup">Back</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    const startButton = document.getElementById("start-game");
-    const dialogBox = document.getElementById("dialog-box");
-    const closeButton = document.getElementById("close-dialog");
-    const images = document.querySelectorAll('.opponent label');
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get references to the dialog boxes
+        const mainDialog = document.getElementById("main-dialog");
+        const loginDialog = document.getElementById("login-dialog");
+        const signUpDialog = document.getElementById("sign-up-dialog");
 
-    // Show dialog box when the "New Game" button is clicked
-    startButton.addEventListener("click", function () {
-        dialogBox.classList.remove("hidden");
-        startButton.classList.add("hidden");
-    });
+        // Get references to the buttons
+        const signUpButton = document.getElementById("sign-up");
+        const logInButton = document.getElementById("log-in");
+        const backToLoginButton = document.getElementById("back-to-main-login");
+        const backToMainButtonFromSignUp = document.getElementById("back-to-main-signup");
 
-    // Close dialog box when the close button is clicked
-    closeButton.addEventListener("click", function () {
-        dialogBox.classList.add("hidden");
-        startButton.classList.remove("hidden");
-    });
+        // Get references to the form inputs (Sign Up)
+        const signUpSubmit = document.getElementById("submit-sign-up");
+        const signUpName = document.getElementById("sign-up-name");
+        const signUpEmail = document.getElementById("sign-up-email");
+        const signUpUsername = document.getElementById("sign-up-username");
+        const signUpPassword = document.getElementById("sign-up-password");
+        const signUpConfirmPassword = document.getElementById("sign-up-confirm-password");
+        const signUpRating = document.getElementById("sign-up-rating");
+        const signUpProfilePic = document.getElementById("sign-up-profile-pic");
 
-    //Image selection handler
-    images.forEach(image => {
-        image.addEventListener('click', function () {
-            const radio = image.previousElementSibling;
-            radio.checked = true;
+        // Get references to the form inputs (Log In)
+        const loginSubmit = document.getElementById("submit-login");
+        const loginUsername = document.getElementById("login-username");
+        const loginPassword = document.getElementById("login-password");
+
+
+        // Initially, show only the main dialog box and hide the others
+        mainDialog.style.display = "block";
+        loginDialog.style.display = "none";
+        signUpDialog.style.display = "none";
+
+        // Show the Sign Up dialog and hide others
+        signUpButton.addEventListener("click", function () {
+            mainDialog.style.display = "none";
+            signUpDialog.style.display = "block";
+            loginDialog.style.display = "none";
+        });
+
+        // Show the Login dialog and hide others
+        logInButton.addEventListener("click", function () {
+            mainDialog.style.display = "none";
+            signUpDialog.style.display = "none";
+            loginDialog.style.display = "block";
+        });
+
+        // Back button in Sign Up dialog returns to main dialog
+        backToMainButtonFromSignUp.addEventListener("click", function () {
+            mainDialog.style.display = "block";
+            loginDialog.style.display = "none";
+            signUpDialog.style.display = "none";
+        });
+
+        // Back button in Login dialog returns to main dialog
+        backToLoginButton.addEventListener("click", function () {
+            mainDialog.style.display = "block";
+            loginDialog.style.display = "none";
+            signUpDialog.style.display = "none";
+        });
+
+        // Function to validate Sign-Up form
+        function validateSignUpForm() {
+            // Check if all fields are filled
+            if (
+                !signUpName.value ||
+                !signUpEmail.value ||
+                !signUpUsername.value ||
+                !signUpPassword.value ||
+                !signUpConfirmPassword.value ||
+                !signUpRating.value ||
+                !signUpProfilePic.files[0]
+            ) {
+                alert("Please fill in all fields before submitting!");
+                return false; // Prevent form submission
+            }
+
+            // Validate Password Match
+            if (signUpPassword.value !== signUpConfirmPassword.value) {
+                alert("Passwords do not match!");
+                return false; // Prevent form submission
+            }
+
+            return true; // All validations passed
+        }
+
+        // Sign-Up Form Submission
+        signUpSubmit.addEventListener("click", function (event) {
+            // Prevent form submission initially
+            // event.preventDefault();
+
+            // Check if all fields are valid before submitting the form
+            if (validateSignUpForm()) {
+                // Prepare Form Data
+                let formData = new FormData();
+                formData.append("name", signUpName.value);
+                formData.append("email", signUpEmail.value);
+                formData.append("username", signUpUsername.value);
+                formData.append("password", signUpPassword.value);
+                formData.append("rating", signUpRating.value);
+                formData.append("profile_pic", signUpProfilePic.files[0]); // Handle file upload
+
+                // Send AJAX request
+                fetch("/signup", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Sign Up Successful!");
+                            window.location.href = "/"; // Redirect to homepage
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
+
+        // Login Form Submission
+        loginSubmit.addEventListener("click", function () {
+            let loginData = {
+                username: loginUsername.value,
+                password: loginPassword.value
+            };
+
+            fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(loginData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Login Successful!");
+                        window.location.href = "/home"; // Redirect to homepage
+                    } else {
+                        alert("Invalid Credentials. Please try again.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         });
     });
-
-
-    // Form submission handler
-    const opponentForm = document.getElementById("opponent-form");
-    opponentForm.addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent form submission
-        const selectedOption = document.querySelector(
-            'input[name="opponent"]:checked'
-        ).value;
-        console.log(`Selected Opponent: ${selectedOption}`);
-        window.location.href = `/play?opponent=${selectedOption}`;
-    });
 </script>
+
 </body>
 </html>

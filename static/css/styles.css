@@ -28,36 +28,7 @@ body, html {
     background-image: url("../img/background-img-3.png");
 }
 
-/*New Game button*/
-.button {
-    position: absolute;
-    top: 80%;
-    background-color: #4d4d4d;
-    color: #FAFAFA;
-    border: 2px solid rgba(38, 39, 48, 0.5);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    opacity: 100%;
-    padding: 10px 20px;
-    margin: 10px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-}
 
-.button:hover {
-    background-color: #E04444;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-    transform: scale(1.05);
-}
-
-.button:active {
-    background-color: #D73838;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-    transform: scale(0.95);
-}
 
 /* Dialog Box */
 .dialog-box {
@@ -191,6 +162,34 @@ body, html {
     align-items: center;
 }
 
+#dialog-box-start-game button {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    color: #FAFAFA;
+    width:200px;
+    border: 2px solid rgba(38, 39, 48, 0.5);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
+    padding: 10px 20px;
+    margin: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+#dialog-box-start-game button:hover {
+    background-color: #E04444;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+#dialog-box-start-game button:active {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    transform: scale(0.95);
+}
 
 /* Gameplay container */
 .gameplay-container {
@@ -386,4 +385,351 @@ body, html {
     background-color: #D73838;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
     transform: scale(0.95);
+}
+
+/* Home Page */
+.dialog-box-home {
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
+    width: 300px;
+    height: 160px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 90%;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dialog-box-home .button-home {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    color: #FAFAFA;
+    width:200px;
+    border: 2px solid rgba(38, 39, 48, 0.5);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
+    padding: 10px 20px;
+    margin: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.dialog-box-home .button-home:hover {
+    background-color: #E04444;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.dialog-box-home .button-home:active {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    transform: scale(0.95);
+}
+
+
+.dialog-box-home h2 {
+    font-size: 24px; /* Adjust the font size as needed */
+    font-weight: bold;
+    margin-bottom: 20px; /* Space between the heading and the rest of the content */
+}
+.dialog-box-home-signup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
+    width: 500px;
+    height: 600px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 90%;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dialog-box-home-signup .sign-up-dialog-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: center;
+    align-items:center;
+}
+
+.dialog-box-home-signup .sign-up-dialog-container p {
+    font-weight: bold;
+    text-align: right;
+    margin-right: 5%;
+    width: 30%;
+}
+
+.dialog-box-home-signup .sign-up-dialog-container input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5%;
+}
+
+.dialog-box-home-signup .sign-up-dialog-container button {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    color: #FAFAFA;
+    width:200px;
+    border: 2px solid rgba(38, 39, 48, 0.5);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
+    padding: 10px 20px;
+    margin: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.dialog-box-home-signup .sign-up-dialog-container button:hover {
+    background-color: #E04444;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.dialog-box-home-signup .sign-up-dialog-container button:active {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    transform: scale(0.95);
+}
+
+.dialog-box-home-main {
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
+    width: 300px;
+    height: 400px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 90%;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; /* Adjusted to evenly space buttons */
+    align-items: center;
+}
+
+.dialog-box-home-main button {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    color: #FAFAFA;
+    width:200px;
+    border: 2px solid rgba(38, 39, 48, 0.5);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
+    padding: 10px 20px;
+    margin: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.dialog-box-home-main button:hover {
+    background-color: #E04444;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.dialog-box-home-main button:active {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    transform: scale(0.95);
+}
+
+.dialog-box-home-login {
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
+    width: 400px;
+    height: 300px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 90%;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dialog-box-home-login .login-dialog-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+.dialog-box-home-login .login-dialog-container p {
+    font-weight: bold;
+    text-align: right;
+    margin-right: 5%;
+    width: 30%;
+}
+
+.dialog-box-home-login .login-dialog-container input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5%;
+}
+
+.dialog-box-home-login .login-dialog-container button {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    color: #FAFAFA;
+    width:200px;
+    border: 2px solid rgba(38, 39, 48, 0.5);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
+    padding: 10px 20px;
+    margin: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+.dialog-box-home-login .login-dialog-container button:hover {
+    background-color: #E04444;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.dialog-box-home-login .login-dialog-container button:active {
+    background-color: #D73838;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    transform: scale(0.95);
+}
+
+.saved-games-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    overflow-y: auto;
+}
+
+.saved-games-container h3 {
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    color: #D73838;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #D73838;
+    padding-bottom: 5px;
+}
+
+.saved-games-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1E1F25;
+}
+
+.saved-games-container th {
+    background-color: #D73838;
+    color: #FAFAFA;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.saved-games-container td {
+    padding: 8px;
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+.saved-games-container tbody tr:nth-child(odd) {
+    background-color: #2C2D36;
+}
+
+.saved-games-container tbody tr td[colspan] {
+    font-style: italic;
+    color: #B0B0B0;
+}
+
+/* Button styles */
+.delete-btn, .resume-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.delete-btn {
+    background-color: #D9534F;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #C9302C;
+}
+
+.resume-btn {
+    background-color: #5CB85C;
+    color: white;
+}
+
+.resume-btn:hover {
+    background-color: #4CAE4C;
+}
+
+
+.hidden {
+    display: none;
 }

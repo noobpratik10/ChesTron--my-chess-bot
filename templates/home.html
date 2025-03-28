@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChesTron</title>
+    <link rel="icon" type="image/png" href="static/img/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="index-page">
+
+<!-- Home Page -->
+<div class="background">
+    <!--Home Page Dialog Box-->
+    <div id="home-dialog" class="dialog-box-home-main">
+        <div class="dialog-container">
+            <button id="new-game" class="button">New Game</button>
+        </div>
+        <div class="dialog-container">
+            <button id="load-game" class="button">Load Game</button>
+        </div>
+        <div class="dialog-container">
+            <button id="history" class="button">History</button>
+        </div>
+        <div class="dialog-container">
+            <button id="exit-game" class="button">Exit</button>
+        </div>
+    </div>
+
+    <!-- Game Bots Dialog Box -->
+    <div id="dialog-box" class="dialog-box hidden">
+        <button id="close-dialog" class="close-button">X</button>
+        <div id="dialog-box-header">
+            <h2>Choose Your Opponent</h2>
+        </div>
+        <form id="opponent-form" action="/make_move" method="POST">
+            <div class="opponent-selection">
+                <div class="opponent">
+                    <input type="radio" name="opponent" value="Option1" id="minmax" checked>
+                    <label for="minmax">
+                        <div class="avatar-container">
+                            <img src="static/img/Pruner.png" alt="MinMax" class="opponent-image">
+                        </div>
+                        <p>PRUNER</p>
+                    </label>
+                </div>
+                <div class="opponent">
+                    <input type="radio" name="opponent" value="Option2" id="cnn">
+                    <label for="cnn">
+                        <div class="avatar-container">
+                            <img src="static/img/CNinga.png" alt="CNN" class="opponent-image">
+                        </div>
+                        <p>CNINGA</p>
+                    </label>
+                </div>
+            </div>
+            <div id="dialog-box-start-game">
+                <button type="submit" class="button">Start Game</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const newGameButton = document.getElementById("new-game");
+            const loadGameButton = document.getElementById("load-game");
+            const historyButton = document.getElementById("history");
+            const exitGameButton = document.getElementById("exit-game");
+
+            const homeDialog = document.getElementById("home-dialog");
+            const botDialog = document.getElementById("dialog-box");
+            const closeBotDialogButton = document.getElementById("close-dialog");
+
+            const images = document.querySelectorAll('.opponent label');
+
+            // Show bot dialog and hide home dialog when "New Game" is clicked
+            newGameButton.addEventListener("click", function () {
+                homeDialog.classList.add("hidden");  // Hide main dialog
+                botDialog.classList.remove("hidden"); // Show bot selection
+            });
+
+            // Close bot dialog and show home dialog when "X" is clicked
+            closeBotDialogButton.addEventListener("click", function () {
+                botDialog.classList.add("hidden"); // Hide bot selection
+                homeDialog.classList.remove("hidden"); // Show main dialog
+            });
+
+            // Image selection handler (for selecting an opponent)
+            images.forEach(image => {
+                image.addEventListener('click', function () {
+                    const radio = image.previousElementSibling;
+                    radio.checked = true;
+                });
+            });
+
+            // Form submission handler (start game with selected opponent)
+            const opponentForm = document.getElementById("opponent-form");
+            opponentForm.addEventListener("submit", function (e) {
+                e.preventDefault(); // Prevent form submission
+                const selectedOption = document.querySelector(
+                    'input[name="opponent"]:checked'
+                ).value;
+                console.log(`Selected Opponent: ${selectedOption}`);
+                window.location.href = `/play?opponent=${selectedOption}`;
+            });
+
+            // Exit button confirmation
+            exitGameButton.addEventListener("click", function () {
+                const confirmExit = confirm("Are you sure you want to exit?");
+                if (confirmExit) {
+                    window.location.href = "/"; // Redirect to homepage
+                }
+            });
+
+            //Load Game
+            loadGameButton.addEventListener("click", function () {
+                window.location.href = "/load_game"; // Redirect to load_page
+            });
+
+            //History
+            historyButton.addEventListener("click", function () {
+                window.location.href = "/history"; // Redirect to history_page
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

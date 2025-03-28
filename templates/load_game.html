@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChesTron</title>
+    <link rel="icon" type="image/png" href="static/img/favicon.png">
+    <!--JQuery script-->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!--chessjs script-->
+    <script src="/static/js/chess.js"></script>
+
+    <!--chessboardjs widget-->
+    <link rel="stylesheet"
+          href="/static/css/chessboard-1.0.0.min.css">
+    <script src="/static/js/chessboard-1.0.0.min.js"></script>
+
+</head>
+<body class="play-page">
+
+<div class="background">
+    <div class="gameplay-container">
+        <!-- Saved Games Table -->
+        <div class="saved-games-container">
+            <h3>Saved Games</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Sr No.</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>PGN</th>
+                    <th>Opponent</th>
+                    <th>Delete</th>
+                    <th>Resume</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for game in saved_games %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ game.timestamp }}</td>
+                    <td>{{ game.status }}</td>
+                    <td>{{ game.pgn }}</td>
+                    <td>
+                        {% if game.opponent == 'Option1' %}
+                        Pruner
+                        {% elif game.opponent == 'Option2' %}
+                        Cninga
+                        {% else %}
+                        Unknown
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Delete button -->
+                        <button class="delete-btn" data-timestamp="{{ game.timestamp }}" data-pgn="{{ game.pgn }}"
+                                data-status="{{ game.status }}">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <!-- Resume button -->
+                        <button class="resume-btn" data-opponent="{{game.opponent}}" data-pgn="{{ game.pgn }}"
+                                data-status="{{ game.status }}"
+                                data-fen="{{game.fen}}">
+                            Resume
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No saved games found.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to update the serial numbers after row removal
+        function updateSerialNumbers() {
+            const rows = document.querySelectorAll("table tbody tr");
+            rows.forEach((row, index) => {
+                const srNoCell = row.querySelector("td:first-child"); // Assuming Sr No. is in the first column
+                if (srNoCell) {
+                    srNoCell.innerText = index + 1; // Update the Sr No. based on the row index
+                }
+            });
+        }
+
+        // Handle delete button click
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const pgn = this.getAttribute("data-pgn");
+                const status = this.getAttribute("data-status");
+                const timestamp = this.getAttribute("data-timestamp")
+
+                // Send a request to delete the game from the database
+                $.ajax({
+                    url: '/delete_game',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        pgn: pgn,
+                        status: status,
+                        timestamp: timestamp
+                    }),
+                    success: function (response) {
+                        console.log(response.message);
+                        // Remove the row from the table after successful deletion
+                        const row = button.closest('tr');
+                        row.remove();
+                        //Update Serial Numbers
+                        updateSerialNumbers();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    }
+                });
+            });
+        });
+
+        // Handle resume button click
+        const resumeButtons = document.querySelectorAll(".resume-btn");
+        resumeButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const pgn = this.getAttribute("data-pgn");
+                const status = this.getAttribute("data-status");
+                const opponent = this.getAttribute("data-opponent")
+                const fen = this.getAttribute("data-fen")
+
+                // Redirect to /play with the pgn and status as query parameters
+                window.location.href = `/play?pgn=${encodeURIComponent(pgn)}&status=${encodeURIComponent(status)}&opponent=${encodeURIComponent(opponent)}&fen=${encodeURIComponent(fen)}`;
+            });
+        });
+    });
+</script>
+

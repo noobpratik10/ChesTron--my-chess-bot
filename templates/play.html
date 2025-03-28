@@ -28,7 +28,7 @@
     <div class="gameplay-container">
         <div class="board-container">
             <!-- chess board view -->
-            <div id="chess_board" class="chess-board"></div>
+            <div id="chess_board" class="chess-board" data-fen="{{fen}}"></div>
         </div>
         <div class="stats-container">
             <!-- Game stats -->
@@ -57,15 +57,16 @@
             </div>
             <div class="game-player">
                 <div id="user-widget" class="player-widget">
-                    <p>YOU</p>
+                    <!-- Display the actual username -->
+                    <p>{{ user.username if user else 'Guest' }}</p>
                 </div>
                 <div class="player-avatar-widget">
-                    <img
-                            src="static/img/Player.png"
-                            alt="You"
-                            class="opponent-image">
+                    <img src="{{ user.profile_pic_url if user and user.profile_pic_url else url_for('static', filename='img/default.png') }}"
+                         alt="{{ user.username if user else 'Guest' }}"
+                         class="opponent-image">
                 </div>
             </div>
+
         </div>
         <div class="control-container">
             <!--game controls-->
@@ -83,63 +84,151 @@
 </html>
 
 <script>
-    //make computer move
-    function make_move() {
-        //retrieve opponent from hidden input field
-        const opponent = document.getElementById("opponent").value;
+    // Function to save the game to the database
+    function saveGameToDB(isHistory) {
+        const timestampOptions = {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        };
 
-        $.post('/make_move', {'fen': game.fen(), 'opponent': opponent}, function (data) {
-            //load fen into the current board state
-            game.move(data.best_move, {sloppy: true});
-            //update board position
-            board.position(game.fen());
-            //update the status
-            updateStatus();
-        });
+        const status = $status.text();
+        const pgn = game.pgn();
+        const timestamp = new Date().toLocaleString("en-IN", timestampOptions);
+        const saveType = isHistory ? "history" : "saved";
+        const opponent = "{{ opponent }}";
+        const fen = game.fen();
+
+        if (pgn.trim() !== "") {
+            $.ajax({
+                url: '/save_game',
+                type: 'POST',
+                contentType: 'application/json',  // Tell Flask it's JSON
+                data: JSON.stringify({
+                    status: status,
+                    pgn: pgn,
+                    timestamp: timestamp,
+                    type: saveType,  // 'history' for completed games, 'saved' for unfinished games
+                    opponent: opponent,
+                    fen: fen
+                }),
+                success: function (response) {
+                    console.log(response.message);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                }
+            });
+        }
     }
 
-    //Handle new game button click
+    // Function to handle new game or quit prompts
+    function promptSaveGame(action) {
+        if (game.game_over()) {
+            saveGameToDB(true); // Save as finished game automatically
+            if (action === "new") {
+                game.reset();
+                board.position("start");
+                updateStatus();
+            } else if (action === "quit") {
+                window.location.href = "/home";
+            }
+        } else {
+            if (confirm("Do you want to save this game?")) {
+                saveGameToDB(false); // Save as unfinished game
+            }
+            if (action === "new") {
+                game.reset();
+                board.position("start");
+                updateStatus();
+            } else if (action === "quit") {
+                window.location.href = "/home";
+            }
+        }
+    }
+
+    // Handle new game button click
     $('#new_game').on('click', function () {
-        //reset board state
-        game.reset()
-        //set initial board position
-        board.position('start')
+        const pgn = game.pgn();
+        if (pgn.trim() !== "") {
+            promptSaveGame("new");
+        } else {
+            game.reset();
+            board.position("start");
+            updateStatus();
+        }
     });
 
-    //Handle make move button click
+    // Handle quit game button click
+    $('#quit_game').on('click', function () {
+        const pgn = game.pgn();
+        if (pgn.trim() !== "") {
+            promptSaveGame("quit");
+        } else {
+            window.location.href = "/home";
+        }
+    });
+
+    // Handle make move button click
     $('#make_move').on('click', function () {
-        //make the move
         make_move();
     });
 
-    //Hnadle take back button click
+    // Handle take back button click
     $('#take_back').on('click', function () {
-        //take move back
-        game.undo()
-        game.undo()
-        //update board
+        game.undo();
+        game.undo();
         board.position(game.fen());
-        //update the status
         updateStatus();
     });
 
-    //Handle flip board button click
+    // Handle flip board button click
     $('#flip_board').on('click', function () {
-        //flip board
-        board.flip()
+        board.flip();
     });
 
-    //Handle quit game button
-    $('#quit_game').on('click', function() {
-        window.location.href = '/';
-    });
+    // Function to handle move logic
+    function make_move() {
+        const opponent = document.getElementById("opponent").value;
 
-    //GUI board and game state variables
-    var board = null
-    var game = new Chess()
-    var $status = $('#status')
-    var $fen = $('#fen')
-    var $pgn = $('#pgn')
+        $.post('/make_move', {'fen': game.fen(), 'opponent': opponent}, function (data) {
+            game.move(data.best_move, {sloppy: true});
+            board.position(game.fen());
+            updateStatus();
+
+            // If game is over, auto-save it to history
+            if (game.game_over()) {
+                saveGameToDB(true);
+            }
+        });
+    }
+
+    // Update game status
+    function updateStatus() {
+        var status = "";
+        var moveColor = game.turn() === 'w' ? "White" : "Black";
+
+        if (game.in_checkmate()) {
+            status = "Game over, " + moveColor + " is in checkmate.";
+        } else if (game.in_draw()) {
+            status = "Game over, drawn position";
+        } else {
+            status = moveColor + " to move";
+            if (game.in_check()) {
+                status += ", " + moveColor + " is in check";
+            }
+        }
+
+        $status.html(status);
+        $fen.html(game.fen());
+        $pgn.html(game.pgn());
+        toggleActiveWidget();
+    }
 
     //handle the highlight for player widget
     function toggleActiveWidget() {
@@ -194,53 +283,26 @@
         board.position(game.fen())
     }
 
-    //update game status
-    function updateStatus() {
-        var status = ''
+    // GUI board and game state variables
+    var board = null;
+    var fen = $('#chess_board').data('fen'); // Get FEN from the data attribute
+    var game = fen ? new Chess(fen) : new Chess(); // Initialize game state based on FEN
 
-        var moveColor = 'White'
-        if (game.turn() === 'b') {
-            moveColor = 'Black'
-        }
+    var $status = $('#status');
+    var $fen = $('#fen');
+    var $pgn = $('#pgn');
 
-        // checkmate?
-        if (game.in_checkmate()) {
-            status = 'Game over, ' + moveColor + ' is in checkmate.'
-        }
-
-        // draw?
-        else if (game.in_draw()) {
-            status = 'Game over, drawn position'
-        }
-
-        // game still on
-        else {
-            status = moveColor + ' to move'
-
-            // check?
-            if (game.in_check()) {
-                status += ', ' + moveColor + ' is in check'
-            }
-        }
-        //update DOM elements
-        $status.html(status)
-        $fen.html(game.fen())
-        $pgn.html(game.pgn())
-
-        //update player widget
-        toggleActiveWidget()
-    }
-
-    //chess board configurations
+    // Chess board configurations
     var config = {
         draggable: true,
-        position: 'start',
+        position: fen || 'start', // Use FEN if available, otherwise start position
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
-    }
-    //create chess board widget instance
-    board = Chessboard('chess_board', config)
+    };
+
+    // Create chess board widget instance
+    board = Chessboard('chess_board', config);
 
     //update game status
     updateStatus()

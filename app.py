@@ -1,7 +1,7 @@
 # Web based GUI for my chess engine
 
 #packages
-from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from flask import Flask, render_template, request, jsonify, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import chess
@@ -19,10 +19,10 @@ load_dotenv()
 
 #create web app instance
 app = Flask(__name__)
-
 #add db
-app.config["MONGO_URI"] = "mongodb://localhost:27017/Chestron"
-mongo = PyMongo(app)
+app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+client = MongoClient(os.getenv("MONGO_URI"))
+db=client["Chestron"]
 
 # Set secret_key from environment variable
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -55,7 +55,7 @@ def play():
 
     if username:
         # Query the database for the logged-in user's information
-        users = mongo.db.Users
+        users=db.Users
         user_data = users.find_one({"username": username})
 
     return render_template('play.html', opponent=opponent,pgn=pgn, status=status, fen=fen, user=user_data)
@@ -93,7 +93,7 @@ def home():
 # Sign Up Route
 @app.route("/signup", methods=["POST"])
 def signup():
-    users = mongo.db.Users  # Users collection
+    users = db.Users
     name = request.form.get("name")
     email = request.form.get("email")
     username = request.form.get("username")
@@ -131,7 +131,7 @@ def signup():
 # Login Route
 @app.route("/login", methods=["POST"])
 def login():
-    users = mongo.db.Users
+    users = db.Users
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
@@ -175,12 +175,12 @@ def save_game():
 
     # Save game in appropriate collection based on type
     if save_type == 'history':
-        mongo.db.Users.update_one(
+        db.Users.update_one(
             {'username': username},
             {'$push': {'history': game_data}}
         )
     elif save_type == 'saved':
-        mongo.db.Users.update_one(
+        db.Users.update_one(
             {'username': username},
             {'$push': {'saved_games': game_data}}
         )
@@ -197,7 +197,7 @@ def load_game():
 
     if username:
         # Fetch user details from the database
-        user = mongo.db.Users.find_one({'username': username})
+        user = db.Users.find_one({'username': username})
 
         if user:
             # Fetch saved games for the user
@@ -227,12 +227,12 @@ def delete_game():
         return jsonify({'message': 'Invalid data'}), 400
 
     # Remove the saved game/ history from the database
-    mongo.db.Users.update_one(
+    db.Users.update_one(
         {'username': username},
         {'$pull': {'saved_games': {'pgn': pgn, 'status': status, 'timestamp': timestamp}}}
     )
 
-    mongo.db.Users.update_one(
+    db.Users.update_one(
         {'username': username},
         {'$pull': {'history': {'pgn': pgn, 'status': status, 'timestamp': timestamp}}}
     )
@@ -246,7 +246,7 @@ def history():
 
     if username:
         # Fetch user details from the database
-        user = mongo.db.Users.find_one({'username': username})
+        user = db.Users.find_one({'username': username})
 
         if user:
             # Fetch history for the user

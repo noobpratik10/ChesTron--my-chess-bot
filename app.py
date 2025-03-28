@@ -1,5 +1,4 @@
 # Web based GUI for my chess engine
-
 #packages
 from pymongo import MongoClient
 from flask import Flask, render_template, request, jsonify, redirect, session

@@ -42,11 +42,11 @@ Check out the app deployed on Render: [ChesTron - my chess bots](https://chestro
 #### Demonstration
 Here are some images demonstrating the working of the app:
 
-![Game Start](images/game_start.png)
+![Game Start](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/6b30ad7395e8fdc0f9030420c611f019e269b618/static/img/image%201.png)
 *Game Start Screen*
 
-![In-Game](images/in_game.png)
-*Playing against AI*
+![Saved Gmaes](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/6b30ad7395e8fdc0f9030420c611f019e269b618/static/img/image%202.png)
+*Loading from saved games*
 
-![Game End](images/game_end.png)
-*Game Over Screen*
+![In-Game](https://github.com/noobpratik10/ChesTron--my-chess-bot/blob/6b30ad7395e8fdc0f9030420c611f019e269b618/static/img/image%203.png)
+*Playing Against AI*

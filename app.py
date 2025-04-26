@@ -13,11 +13,12 @@ import cloudinary.uploader
 import cloudinary.api
 from dotenv import load_dotenv
 
+#create web app instance
+app = Flask(__name__)
+
 # Load environment variables from .env file
 load_dotenv()
 
-#create web app instance
-app = Flask(__name__)
 #add db
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 client = MongoClient(os.getenv("MONGO_URI"))
@@ -262,4 +263,4 @@ def history():
 #main driver
 if __name__ == '__main__':
     #start HTTP server
-    app.run(debug=True,threaded=True)
+    app.run(debug=False, host='0.0.0.0', port=5000, threaded=True)
